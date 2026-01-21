@@ -1,16 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clamp Calculator Test</title>
-</head>
-<body style="font-family: sans-serif; padding: 20px;">
-  <h1>✅ Clamp Calculator Loaded</h1>
-  <p>If you see this, GitHub Pages is working.</p>
+<script>
+function calculate() {
+    const od = parseFloat(document.getElementById("lineSize").value);
+    const wraps = parseFloat(document.getElementById("lineType").value);
 
-  <button onclick="alert('JavaScript works!')">
-    Test JavaScript
-  </button>
-</body>
-</html>
+    const baseSlack = 3;
+    const vibrationMargin = 0.75;
+    const overlap = 0.75;
+
+    let userSlack = parseFloat(document.getElementById("slack").value);
+    if (isNaN(userSlack)) userSlack = baseSlack;
+
+    const circumference = Math.PI * od;
+    const wrapLength = circumference * wraps;
+
+    let rawTotal = wrapLength + userSlack + vibrationMargin + overlap;
+    let dotTotal = rawTotal * 1.10;
+
+    const clampSize = Math.ceil(dotTotal);
+
+    let warning = "🟩 DOT SAFE";
+    let note = "Adequate slack, wraps, and vibration margin.";
+
+    if (userSlack < 2.5) {
+        warning = "🟥 FAIL RISK";
+        note = "Insufficient slack — risk of pull-out on turns.";
+    } else if (clampSize - dotTotal > 2) {
+        warning = "🟨 INSPECTOR ATTENTION";
+        note = "Excess length — verify no chafing or dragging.";
+    } else if (wraps < 1.5) {
+        warning = "🟥 FAIL RISK";
+        note = "Insufficient wraps for gladhand retention.";
+    }
+
+    document.getElementById("output").innerHTML =
+        `<strong>${clampSize}" Clamp</strong><br><br>
+         <strong>Status:</strong> ${warning}<br>
+         <small>${note}</small><br><br>
+         <small>DOT safety reserve applied</small>`;
+}
+</script>
